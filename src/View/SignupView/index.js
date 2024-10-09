@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { auth, db } from "../../firebase";  // Correct relative path
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-
+import { toast } from "react-toastify";
 function SignupView() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,10 +36,16 @@ function SignupView() {
      
 
       alert("Account created successfully!");
+      toast.success("User registeres", {
+        position:"top-center",
+      });
 
       // Redirect or do something else after signup
     } catch (error) {
       console.log(error.message);
+      toast.success(error.message, {
+        position:"bottom-center",
+      });
       
     }
   };
