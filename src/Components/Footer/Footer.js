@@ -25,16 +25,16 @@ function Footer() {
           </div>
           <div className="list">
             <ul>
-              <li>About OLX Group</li>
+              <li>About CampusThrift Group</li>
               <li>Careers</li>
               <li>Contact Us</li>
-              <li>OLXPeople</li>
+              <li>CampusThrift People</li>
             </ul>
           </div>
         </div>
         <div>
           <div className="heading">
-            <p>OLX</p>
+            <p>CampusThrift</p>
           </div>
           <div className="list">
             <ul>
@@ -46,8 +46,7 @@ function Footer() {
         </div>
       </div>
       <div className="footer">
-        <p>Other Countries Pakistan - South Africa - Indonesia</p>
-        <p>Free Classifieds in India. © 2006-2021 OLX</p>
+        <p>CampusThrift -  Serving Since 2024 © Aarushi C Pandey           Radhika Agarwal   Janvi Khanayat    </p>
       </div>
     </div>
   );
