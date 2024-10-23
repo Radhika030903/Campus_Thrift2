@@ -1,9 +1,10 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { auth } from "../../firebase";
 
 const Login = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,6 +14,7 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, email, password)
         .then(() => {
           console.log("Login successful");
+          navigate("/home"); // Redirect to HomeView on successful login
         })
         .catch((error) => {
           console.error("Error during sign-in:", error);

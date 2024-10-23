@@ -1,0 +1,24 @@
+.product-detail {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .product-detail img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .buy-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .buy-button:hover {
+    background-color: #218838;
+  }
+  

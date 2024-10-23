@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-
-import { auth, db } from "../../firebase";  // Correct relative path
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { auth, db } from "../../firebase"; // Correct relative path
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
+
 function SignupView() {
+  const navigate = useNavigate(); // Initialize useNavigate
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,38 +17,42 @@ function SignupView() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-   
+
+    // Password matching check
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!", {
+        position: "bottom-center",
+      });
+      return;
+    }
 
     try {
       // Create user with email and password in Firebase Auth
-     await createUserWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
-      console.log(user);
-      if(user) {
-        await setDoc(doc(db,"User",user.uid),{
-         email:user.email,
-         name: name,
-         institute: institute,
-         state: state,
-         city: city,
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (user) {
+        await setDoc(doc(db, "User", user.uid), {
+          email: user.email,
+          name: name,
+          institute: institute,
+          state: state,
+          city: city,
         });
       }
 
       // Store user data in Firestore
-     
-
-      alert("Account created successfully!");
-      toast.success("User registeres", {
-        position:"top-center",
+      toast.success("User registered successfully!", {
+        position: "top-center",
       });
 
-      // Redirect or do something else after signup
+      // Redirect to LoginView
+      navigate("/login"); // Redirect after successful signup
     } catch (error) {
       console.log(error.message);
-      toast.success(error.message, {
-        position:"bottom-center",
+      toast.error(error.message, {
+        position: "bottom-center",
       });
-      
     }
   };
 
@@ -96,9 +102,57 @@ function SignupView() {
                   required
                 >
                   <option value="">Select Institute</option>
-                  <option value="IIT Bombay">IIT Bombay</option>
-                  <option value="NIT Trichy">NIT Trichy</option>
-                  {/* Add other options */}
+                  {/* IITs */}
+                  <optgroup label="IITs">
+                    <option value="IIT Bombay">IIT Bombay</option>
+                    <option value="IIT Delhi">IIT Delhi</option>
+                    <option value="IIT Kanpur">IIT Kanpur</option>
+                    <option value="IIT Kharagpur">IIT Kharagpur</option>
+                    <option value="IIT Madras">IIT Madras</option>
+                    <option value="IIT Roorkee">IIT Roorkee</option>
+                    <option value="IIT Guwahati">IIT Guwahati</option>
+                    <option value="IIT Hyderabad">IIT Hyderabad</option>
+                    <option value="IIT Patna">IIT Patna</option>
+                    <option value="IIT Bhubaneswar">IIT Bhubaneswar</option>
+                    <option value="IIT Mandi">IIT Mandi</option>
+                    <option value="IIT Jammu">IIT Jammu</option>
+                    <option value="IIT Dharwad">IIT Dharwad</option>
+                  </optgroup>
+
+                  {/* NITs */}
+                  <optgroup label="NITs">
+                    <option value="NIT Trichy">NIT Trichy</option>
+                    <option value="NIT Surathkal">NIT Surathkal</option>
+                    <option value="NIT Warangal">NIT Warangal</option>
+                    <option value="NIT Calicut">NIT Calicut</option>
+                    <option value="NIT Rourkela">NIT Rourkela</option>
+                    <option value="NIT Durgapur">NIT Durgapur</option>
+                    <option value="NIT Kurukshetra">NIT Kurukshetra</option>
+                    <option value="NIT Jamshedpur">NIT Jamshedpur</option>
+                    <option value="NIT Silchar">NIT Silchar</option>
+                    <option value="NIT Agartala">NIT Agartala</option>
+                    <option value="NIT Delhi">NIT Delhi</option>
+                    <option value="NIT Raipur">NIT Raipur</option>
+                    <option value="NIT Patna">NIT Patna</option>
+                  </optgroup>
+
+                  {/* IIITs */}
+                  <optgroup label="IIITs">
+                    <option value="IIIT Hyderabad">IIIT Hyderabad</option>
+                    <option value="IIIT Bangalore">IIIT Bangalore</option>
+                    <option value="IIIT Allahabad">IIIT Allahabad</option>
+                    <option value="IIIT Delhi">IIIT Delhi</option>
+                    <option value="IIIT Gwalior">IIIT Gwalior</option>
+                    <option value="IIIT Pune">IIIT Pune</option>
+                    <option value="IIIT Kota">IIIT Kota</option>
+                    <option value="IIIT Sri City">IIIT Sri City</option>
+                    <option value="IIIT Bhagalpur">IIIT Bhagalpur</option>
+                  </optgroup>
+
+                  {/* Other Institutes */}
+                  <optgroup label="Other Institutes">
+                    <option value="Birla Institute of Applied Sciences">Birla Institute of Applied Sciences</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -110,9 +164,41 @@ function SignupView() {
                   required
                 >
                   <option value="">Select State</option>
+                  {/* States */}
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                  <option value="Assam">Assam</option>
+                  <option value="Bihar">Bihar</option>
+                  <option value="Chhattisgarh">Chhattisgarh</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Haryana">Haryana</option>
+                  <option value="Himachal Pradesh">Himachal Pradesh</option>
+                  <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                  <option value="Jharkhand">Jharkhand</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Kerala">Kerala</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
                   <option value="Maharashtra">Maharashtra</option>
+                  <option value="Manipur">Manipur</option>
+                  <option value="Meghalaya">Meghalaya</option>
+                  <option value="Mizoram">Mizoram</option>
+                  <option value="Nagaland">Nagaland</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Punjab">Punjab</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option value="Sikkim">Sikkim</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="Telangana">Telangana</option>
+                  <option value="Tripura">Tripura</option>
                   <option value="Uttar Pradesh">Uttar Pradesh</option>
-                  {/* Add other options */}
+                  <option value="Uttarakhand">Uttarakhand</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                  <option value="Chandigarh">Chandigarh</option>
+                  <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                  <option value="Lakshadweep">Lakshadweep</option>
+                  <option value="Delhi">Delhi</option>
                 </select>
               </div>
 
@@ -171,8 +257,3 @@ function SignupView() {
 }
 
 export default SignupView;
-
-
-
-
-

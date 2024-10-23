@@ -1,24 +1,29 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Updated import from useHistory to useNavigate
+import { useNavigate } from "react-router-dom"; // Replace useHistory with useNavigate
 import { AllPostContext } from "../../contextStore/AllPostContext";
 import { PostContext } from "../../contextStore/PostContext";
+import "./Header.css";
+import SearchIcon from "../../assets/SearchIcon";
+import Arrow from "../../assets/Arrow";
+import SellButton from "../../assets/SellButton";
+import SellButtonPlus from "../../assets/SellButtonPlus";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../contextStore/AuthContext";
-import "./Header.css";
+import Search from "../Search/Search";
 
 function Header() {
   const { allPost } = useContext(AllPostContext);
   const { setPostContent } = useContext(PostContext);
-  const navigate = useNavigate(); // Replacing useHistory with useNavigate
+  const navigate = useNavigate(); // useNavigate instead of useHistory
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
 
   const handleFilter = (event) => {
     const searchWord = event.target.value;
     setWordEntered(searchWord);
-    const newFilter = allPost.filter((value) => {
-      return value.name.toLowerCase().includes(searchWord.toLowerCase());
-    });
+    const newFilter = allPost.filter((value) =>
+      value.name.toLowerCase().includes(searchWord.toLowerCase())
+    );
 
     if (searchWord === "") {
       setFilteredData([]);
@@ -34,7 +39,7 @@ function Header() {
 
   const handleSelectedSearch = (value) => {
     setPostContent(value);
-    navigate("/view"); // Updated history.push to navigate
+    navigate("/view"); // use navigate instead of history.push
   };
 
   const handleEmptyClick = () => {
@@ -42,12 +47,6 @@ function Header() {
   };
 
   const { user } = useContext(AuthContext);
-
-  const logoutHandler = () => {
-    // Removed Firebase authentication logic
-    alert("You have logged out."); // Placeholder for logout action
-    navigate("/login"); // Redirect to login
-  };
 
   return (
     <div className="headerParentDiv">
@@ -61,28 +60,35 @@ function Header() {
           />
           {filteredData.length === 0 ? (
             <div onClick={handleEmptyClick}>
-              <button>Search</button>
+              <SearchIcon />
             </div>
           ) : (
             <div id="clearBtn" onClick={clearInput}>
-              <button>Clear</button>
+              <Arrow />
             </div>
           )}
           {filteredData.length !== 0 && (
             <div className="dataResult-header">
-              {filteredData.slice(0, 15).map((value, key) => {
-                return (
-                  <div
-                    key={key}
-                    className="dataItem-header"
-                    onClick={() => handleSelectedSearch(value)}
-                  >
-                    <p>{value.name} </p>
-                  </div>
-                );
-              })}
+              {filteredData.slice(0, 15).map((value, key) => (
+                <div
+                  key={key}
+                  className="dataItem-header"
+                  onClick={() => handleSelectedSearch(value)}
+                >
+                  <p>{value.name}</p>
+                </div>
+              ))}
             </div>
           )}
+        </div>
+
+        <div className="productSearch">
+          <Search />
+        </div>
+
+        <div className="language">
+          <span>ENGLISH</span>
+          <Arrow />
         </div>
 
         <div className="loginPage">
@@ -95,15 +101,18 @@ function Header() {
           )}
           <hr />
         </div>
+
         {user && (
-          <span onClick={logoutHandler} className="logout-span">
+          <span onClick={() => navigate("/logout")} className="logout-span">
             Logout
           </span>
         )}
 
         <Link to="/create">
           <div className="sellMenu">
+            <SellButton />
             <div className="sellMenuContent">
+              <SellButtonPlus />
               <span>SELL</span>
             </div>
           </div>
