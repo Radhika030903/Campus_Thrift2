@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { auth, db } from "../../firebase"; // Correct relative path
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function SignupView() {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -46,10 +47,12 @@ function SignupView() {
         position: "top-center",
       });
 
-      // Redirect to LoginView
-      navigate("/login"); // Redirect after successful signup
+      // Wait a brief moment for the toast to be visible
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       toast.error(error.message, {
         position: "bottom-center",
       });
@@ -252,6 +255,7 @@ function SignupView() {
           </a>
         </div>
       </div>
+      <ToastContainer position="bottom-center" />
     </div>
   );
 }
