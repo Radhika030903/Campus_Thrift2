@@ -9,6 +9,7 @@ import AuthProvider, { AuthContext } from './contextStore/AuthContext';
 import PostProvider from './contextStore/PostContext';
 import AllPostProvider from './contextStore/AllPostContext';
 import CreatePost from "./Components/CreatePost/CreatePost";
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = React.useContext(AuthContext);

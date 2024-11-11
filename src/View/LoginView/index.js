@@ -2,6 +2,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { auth } from "../../firebase";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -11,16 +13,16 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          console.log("Login successful");
-          navigate("/home"); // Redirect to HomeView on successful login
-        })
-        .catch((error) => {
-          console.error("Error during sign-in:", error);
-        });
+      await signInWithEmailAndPassword(auth, email, password);
+      toast.success("Login successful!");
+
+      // Wait a brief moment for the toast to be visible
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
     } catch (error) {
-      console.error("Unexpected error:", error);
+      console.error("Error during sign-in:", error);
+      toast.error("Invalid email or password");
     }
   };
 
@@ -115,6 +117,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="bottom-center" />
     </form>
   );
 };
