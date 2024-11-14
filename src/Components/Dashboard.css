@@ -1,17 +1,187 @@
-.dashboard {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* General Dashboard Container */
+.dashboard-container {
+  width: 80%;
+  margin: 2rem auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Warning Message */
+.status-warning {
+  background-color: #ffdddd;
+  color: #d9534f;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.status-warning span {
+  color: #d9534f;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Dashboard Tabs */
+.dashboard-tabs {
+  display: flex;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #f8f9fa;
+  border: none;
+  outline: none;
+}
+
+.tab.active {
+  border-bottom: 3px solid #007bff;
+  color: #007bff;
+  font-weight: bold;  /* Bold active tab */
+}
+
+/* Dashboard Content (Profile + Listings) */
+.dashboard-content {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Profile Info Section */
+.profile-info {
+  flex: 1;
+  min-width: 300px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+/* Profile Picture Section */
+.profile-picture {
+  display: flex;
+  flex-direction: column;  /* Stack the image and the text vertically */
+  justify-content: center; /* Center the items horizontally */
+  align-items: center;     /* Center the items vertically */
+  margin-bottom: 20px;
+  height: 200px;           /* Ensure there's enough height for vertical centering */
+}
+
+/* Profile Picture Image */
+.profile-picture img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px; /* Add some space between the image and the "Choose file" text */
+}
+
+/* Choose File Text Section */
+.choose-file-text {
+  font-size: 14px; /* Adjust the font size if necessary */
+  color: #007bff;  /* Optional: change color of text */
+  cursor: pointer; /* Indicate that it's clickable */
+}
+
+
+
+
+/* Profile Details Inputs */
+.profile-details input {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Edit Profile Button */
+.edit-profile-btn {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.edit-profile-btn:hover {
+  background-color: #0056b3;
+}
+
+/* User Listings Section */
+.user-listings {
+  flex: 2;
+  min-width: 400px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* Listings Container */
+.listings-container {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));  /* Responsive grid */
+}
+
+/* Individual Listing Item */
+.listing-item {
+  padding: 15px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Adding subtle shadow for depth */
+}
+
+/* Listing Title */
+.listing-item h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+/* Listing Action Buttons */
+.listing-actions button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.listing-actions button:hover {
+  background-color: #5a6268;
+}
+
+/* 'Action' Button (Primary) */
+.listing-actions button:last-child {
+  background-color: #28a745;
+}
+
+.listing-actions button:last-child:hover {
+  background-color: #218838;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .dashboard-container {
+    width: 95%;
   }
   
-  h2 {
-    color: #333;
+  .dashboard-content {
+    flex-direction: column;
   }
-  
-  p {
-    margin: 10px 0;
+
+  .profile-info, .user-listings {
+    min-width: 100%;
   }
-  
+
+  .listings-container {
+    grid-template-columns: 1fr;  /* Stack listings on small screens */
+  }
+}
+
