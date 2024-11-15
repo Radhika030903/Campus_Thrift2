@@ -36,9 +36,8 @@ function App() {
               <Route
                 path="/create"
                 element={
-                  <ProtectedRoute>
-                    <CreatePost />
-                  </ProtectedRoute>
+                  <CreatePost />
+
                 }
               />
               <Route path="/" element={<HomeView />} /> {/* Default route */}

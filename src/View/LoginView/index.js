@@ -17,9 +17,7 @@ const Login = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       if (userCredential.user) {
         toast.success("Login successful!");
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
+        navigate('/');
       }
     } catch (error) {
       console.error("Error during sign-in:", error);
