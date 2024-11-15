@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Replace useHistory with useNavigate
+import { useNavigate, Link } from "react-router-dom";
 import { AllPostContext } from "../../contextStore/AllPostContext";
 import { PostContext } from "../../contextStore/PostContext";
 import "./Header.css";
@@ -7,14 +7,14 @@ import SearchIcon from "../../assets/SearchIcon";
 import Arrow from "../../assets/Arrow";
 import SellButton from "../../assets/SellButton";
 import SellButtonPlus from "../../assets/SellButtonPlus";
-import { Link } from "react-router-dom";
 import { AuthContext } from "../../contextStore/AuthContext";
 import Search from "../Search/Search";
 
 function Header() {
   const { allPost } = useContext(AllPostContext);
   const { setPostContent } = useContext(PostContext);
-  const navigate = useNavigate(); // useNavigate instead of useHistory
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
 
@@ -39,21 +39,15 @@ function Header() {
 
   const handleSelectedSearch = (value) => {
     setPostContent(value);
-    navigate("/view"); // use navigate instead of history.push
+    navigate("/view");
   };
 
   const handleEmptyClick = () => {
     alert("No items found.., please search by product name");
   };
 
-  const { user } = useContext(AuthContext);
-
   const handleSellClick = () => {
-    if (!user) {
-      navigate('/login');
-    } else {
-      navigate('/create');
-    }
+    navigate('/create'); // Open the post ad form directly
   };
 
   const handleLoginClick = () => {
@@ -105,7 +99,7 @@ function Header() {
 
         <div className="loginPage">
           {user ? (
-            user.displayName
+            <span>{user.displayName}</span>
           ) : (
             <Link to="/login">
               <span>Login</span>
@@ -113,16 +107,6 @@ function Header() {
           )}
           <hr />
         </div>
-
-        {user ? (
-          <span onClick={() => navigate("/logout")} className="logout-span">
-            Logout
-          </span>
-        ) : (
-          <span onClick={handleLoginClick} className="login-span">
-            Login
-          </span>
-        )}
 
         <div className="sellMenu" onClick={handleSellClick}>
           <SellButton />
