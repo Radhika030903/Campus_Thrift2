@@ -33,7 +33,7 @@ function CreatePost() {
     return (
         <div className="createPost">
             <div className="postForm">
-                <h2>POST YOUR ITEM</h2>
+                <h2>POST ITEM</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="formInput">
                         <label>Item Name</label>
