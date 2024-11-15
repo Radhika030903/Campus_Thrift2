@@ -16,35 +16,18 @@ function CreatePost() {
         imageUrl: '',
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-
-        // Here you would typically handle the form submission
-        // For now, we'll just log the data
-        console.log(formData);
-
-        // Reset form
-        setFormData({
-            name: '',
-            category: '',
-            price: '',
-            description: '',
-            condition: '',
-            age: '',
-            imageUrl: '',
-        });
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
         }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Your form submission logic here
+        console.log(formData);
     };
 
     return (

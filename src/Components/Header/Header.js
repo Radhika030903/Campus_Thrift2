@@ -48,6 +48,18 @@ function Header() {
 
   const { user } = useContext(AuthContext);
 
+  const handleSellClick = () => {
+    if (!user) {
+      navigate('/login');
+    } else {
+      navigate('/create');
+    }
+  };
+
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
   return (
     <div className="headerParentDiv">
       <div className="headerChildDiv">
@@ -102,21 +114,23 @@ function Header() {
           <hr />
         </div>
 
-        {user && (
+        {user ? (
           <span onClick={() => navigate("/logout")} className="logout-span">
             Logout
           </span>
+        ) : (
+          <span onClick={handleLoginClick} className="login-span">
+            Login
+          </span>
         )}
 
-        <Link to="/create">
-          <div className="sellMenu">
-            <SellButton />
-            <div className="sellMenuContent">
-              <SellButtonPlus />
-              <span>SELL</span>
-            </div>
+        <div className="sellMenu" onClick={handleSellClick}>
+          <SellButton />
+          <div className="sellMenuContent">
+            <SellButtonPlus />
+            <span>SELL</span>
           </div>
-        </Link>
+        </div>
       </div>
     </div>
   );
