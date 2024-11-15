@@ -1,29 +1,46 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Replace useHistory with useNavigate
+import { useNavigate, Link } from "react-router-dom";
 import { AllPostContext } from "../../contextStore/AllPostContext";
 import { PostContext } from "../../contextStore/PostContext";
+import { useAuth } from '../../contextStore/AuthContext';
 import "./Header.css";
 import SearchIcon from "../../assets/SearchIcon";
 import Arrow from "../../assets/Arrow";
 import SellButton from "../../assets/SellButton";
 import SellButtonPlus from "../../assets/SellButtonPlus";
-import { Link } from "react-router-dom";
+
 import { AuthContext } from "../../contextStore/AuthContext";
+
 import Search from "../Search/Search";
+import AccountDropdown from '../AccountDropdown'; // Importing the AccountDropdown component
+import { signOut } from "firebase/auth"; // Importing signOut from Firebase Auth
+import { auth } from "../../firebase"; // Ensure you have Firebase initialized
 
 function Header() {
+  const { user, logout } = useAuth();
   const { allPost } = useContext(AllPostContext);
+
+  const { setPostContent } = useContext(PostContext);// Firebase Auth user context
+  const navigate = useNavigate();
+  
+
   const { setPostContent } = useContext(PostContext);
-  const navigate = useNavigate(); // useNavigate instead of useHistory
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
 
+  // Function to handle search filtering
   const handleFilter = (event) => {
     const searchWord = event.target.value;
     setWordEntered(searchWord);
-    const newFilter = allPost.filter((value) =>
-      value.name.toLowerCase().includes(searchWord.toLowerCase())
-    );
+    const newFilter = allPost
+      ? allPost.filter((value) =>
+          value.name.toLowerCase().includes(searchWord.toLowerCase())
+        )
+      : [];
 
     if (searchWord === "") {
       setFilteredData([]);
@@ -39,21 +56,23 @@ function Header() {
 
   const handleSelectedSearch = (value) => {
     setPostContent(value);
-    navigate("/view"); // use navigate instead of history.push
+    navigate("/view");
   };
 
   const handleEmptyClick = () => {
     alert("No items found.., please search by product name");
   };
 
-  const { user } = useContext(AuthContext);
-
-  const handleSellClick = () => {
-    if (!user) {
-      navigate('/login');
-    } else {
-      navigate('/create');
+  // Function to handle Logout
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
     }
+  const handleSellClick = () => {
+    navigate('/create'); // Open the post ad form directly
   };
 
   const handleLoginClick = () => {
@@ -63,12 +82,14 @@ function Header() {
   return (
     <div className="headerParentDiv">
       <div className="headerChildDiv">
+        {/* Search Input */}
         <div className="placeSearch">
           <input
             type="text"
             placeholder="Search specific product..."
             value={wordEntered}
             onChange={handleFilter}
+            aria-label="Search specific product"
           />
           {filteredData.length === 0 ? (
             <div onClick={handleEmptyClick}>
@@ -94,18 +115,38 @@ function Header() {
           )}
         </div>
 
+        {/* Product Search */}
         <div className="productSearch">
           <Search />
         </div>
 
+        {/* Language Selector */}
         <div className="language">
           <span>ENGLISH</span>
           <Arrow />
         </div>
 
+        {/* User Account & Dropdown */}
         <div className="loginPage">
           {user ? (
-            user.displayName
+
+            <div className="userMenu" onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <span>Welcome, {user.displayName || "User"}</span>
+              <Arrow />
+              {dropdownOpen && (
+                <div className="dropdownMenu">
+                  <Link to="/dashboard">
+                    <div className="dropdownItem">My Account</div>
+                  </Link>
+                  <div className="dropdownItem" onClick={handleLogout}>
+                    Logout
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <span>{user.displayName}</span>
+
           ) : (
             <Link to="/login">
               <span>Login</span>
@@ -114,21 +155,22 @@ function Header() {
           <hr />
         </div>
 
-        {user ? (
-          <span onClick={() => navigate("/logout")} className="logout-span">
-            Logout
-          </span>
-        ) : (
-          <span onClick={handleLoginClick} className="login-span">
-            Login
-          </span>
-        )}
+
+        {/* Sell Button */}
+        <Link to="/create">
+          <div className="sellMenu">
+            <SellButton />
+            <div className="sellMenuContent">
+              <SellButtonPlus />
+              <span>SELL</span>
+            </div>
 
         <div className="sellMenu" onClick={handleSellClick}>
           <SellButton />
           <div className="sellMenuContent">
             <SellButtonPlus />
             <span>SELL</span>
+
           </div>
         </div>
       </div>
