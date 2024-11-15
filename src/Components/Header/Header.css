@@ -1,10 +1,12 @@
 .headerParentDiv {
   padding: 10px;
-  background-color: #ffce32; /* Apply dark yellow background */
+  background-color: #ffce32;
+  /* Apply dark yellow background */
   position: fixed;
   width: 100vw;
   z-index: 999;
-  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 20px 20px -10px rgba(0, 0, 0, 0.3); /* Add shadow similar to signup form */
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 20px 20px -10px rgba(0, 0, 0, 0.3);
+  /* Add shadow similar to signup form */
 }
 
 .headerChildDiv {
@@ -100,6 +102,7 @@
 }
 
 @media only screen and (max-width: 700px) {
+
   .placeSearch,
   .productSearch {
     display: none;
@@ -139,4 +142,16 @@
   background-color: #ebeeef;
 }
 
-  
+.login-span,
+.logout-span {
+  cursor: pointer;
+  padding: 8px 16px;
+  margin-right: 16px;
+  color: #002f34;
+  font-weight: 500;
+}
+
+.login-span:hover,
+.logout-span:hover {
+  color: #00a49f;
+}

@@ -16,29 +16,6 @@ function CreatePost() {
         imageUrl: '',
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-
-        // Here you would typically handle the form submission
-        // For now, we'll just log the data
-        console.log(formData);
-
-        // Reset form
-        setFormData({
-            name: '',
-            category: '',
-            price: '',
-            description: '',
-            condition: '',
-            age: '',
-            imageUrl: '',
-        });
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -47,10 +24,16 @@ function CreatePost() {
         }));
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Your form submission logic here
+        console.log(formData);
+    };
+
     return (
         <div className="createPost">
             <div className="postForm">
-                <h2>POST YOUR ITEM</h2>
+                <h2>POST ITEM</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="formInput">
                         <label>Item Name</label>

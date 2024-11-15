@@ -19,12 +19,15 @@
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 20px 20px -10px rgba(0, 0, 0, 0.3);
+    border: 2px solid #3A1E08;
 }
 
 .postForm h2 {
     text-align: center;
-    color: #002f34;
+    color: #532c0ee9;
     margin-bottom: 1.5rem;
+    font-weight: bold;
 }
 
 .formInput {
@@ -34,7 +37,7 @@
 .formInput label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #002f34;
+    color: #7b4b27e9;
     font-weight: 500;
 }
 
@@ -43,29 +46,74 @@
 .formInput textarea {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 1px solid #3A1E08;
     border-radius: 4px;
     font-size: 1rem;
+    background-color: #fff;
 }
 
-.formInput textarea {
-    resize: vertical;
+.formInput input:focus,
+.formInput select:focus,
+.formInput textarea:focus {
+    outline: none;
+    border-color: #ffce32;
+    box-shadow: 0 0 0 2px rgba(255, 206, 50, 0.2);
 }
 
 .submitBtn {
     width: 100%;
     padding: 0.75rem;
-    background-color: #002f34;
-    color: white;
-    border: none;
+    background-color: #ffce32;
+    color: #3A1E08;
+    border: 2px solid #3A1E08;
     border-radius: 4px;
     font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .submitBtn:hover {
-    background-color: #00474f;
+    background-color: #ffd950;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.drop-zone {
+    border: 2px dashed #3A1E08;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(255, 206, 50, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.drop-zone:hover {
+    background: rgba(255, 206, 50, 0.2);
+    border-color: #ffce32;
+}
+
+.drop-zone.drag-over {
+    background: rgba(255, 206, 50, 0.3);
+    border-color: #ffce32;
+}
+
+.drop-zone input[type="file"] {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+}
+
+.drop-zone p {
+    margin: 0 0 10px 0;
+    color: #3A1E08;
+}
+
+.selected-images {
+    margin-top: 10px;
+    text-align: left;
 }
 
 @media (max-width: 768px) {
