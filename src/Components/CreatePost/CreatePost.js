@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contextStore/AuthContext';
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../../firebase"; // Adjust the path to your Firebase config
 import './CreatePost.css';
 
 function CreatePost() {
     const navigate = useNavigate();
-    const { user } = useContext(AuthContext);
+    const { user } = useContext(AuthContext); // Get user details from context
     const [formData, setFormData] = useState({
         name: '',
         category: '',
@@ -24,10 +26,26 @@ function CreatePost() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Your form submission logic here
-        console.log(formData);
+
+        try {
+            const postRef = collection(db, "posts");
+            const newPost = {
+                ...formData,
+                userId: user?.uid || "anonymous",
+                createdAt: new Date().toISOString(),
+            };
+
+            await addDoc(postRef, newPost);
+
+            console.log("Post added successfully!");
+            alert("Your post has been submitted!");
+            navigate("/");
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            alert("Failed to submit your post. Please try again.");
+        }
     };
 
     return (
@@ -133,4 +151,4 @@ function CreatePost() {
     );
 }
 
-export default CreatePost; 
+export default CreatePost;
