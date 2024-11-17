@@ -1,13 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../contextStore/AuthContext';
+import { useAuth } from '../../contextStore/AuthContext'; // Use useAuth hook instead of useContext
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase"; // Adjust the path to your Firebase config
 import './CreatePost.css';
 
 function CreatePost() {
     const navigate = useNavigate();
-    const { user } = useContext(AuthContext); // Get user details from context
+    const { user } = useAuth(); // Use useAuth to get user details
     const [formData, setFormData] = useState({
         name: '',
         category: '',
@@ -33,7 +33,7 @@ function CreatePost() {
             const postRef = collection(db, "posts");
             const newPost = {
                 ...formData,
-                userId: user?.uid || "anonymous",
+                userId: user?.uid || "anonymous", // Use user from context
                 createdAt: new Date().toISOString(),
             };
 

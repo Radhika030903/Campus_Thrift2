@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "../../firebase"; // Adjust the path to your Firebase config
 import "./Post.css";
 import PostCards from "../PostCards/PostCards";
 import { AllPostContext } from "../../contextStore/AllPostContext";
@@ -12,97 +14,38 @@ function Posts() {
   const [loading2, setLoading2] = useState(true);
 
   useEffect(() => {
-    // Simulated data fetch
-    const simulatedFetchPosts = () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const allPosts = [
-            {
-              id: 1,
-              name: "iPhone 14 - Red",
-              price: "10000",
-              createdAt: new Date("2023-10-01"),
-              imageUrl: "https://m.xcite.com/media/catalog/product/i/p/iphone_14_5g_-_red_1_3.jpg",
-            },
-            {
-              id: 6,
-              name: "Digital Camera",
-              price: "499",
-              createdAt: new Date("2023-09-05"),
-              imageUrl: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-            },
-            {
-              id: 7,
-              name: "Bluetooth Speaker",
-              price: "999",
-              createdAt: new Date("2023-09-01"),
-              imageUrl: "https://th.bing.com/th/id/OIP.XbrFx6W0hObvguLGIFWPaQAAAA?rs=1&pid=ImgDetMain",
-            },
-            {
-              id: 8,
-              name: "E-Book Reader",
-              price: "120",
-              createdAt: new Date("2023-08-28"),
-              imageUrl: "https://th.bing.com/th/id/OIP.ZnMV40kDZa26nXmBR8LcoAHaHa?rs=1&pid=ImgDetMain",
-            },
-            {
-              id: 9,
-              name: "Gaming Mouse",
-              price: "60",
-              createdAt: new Date("2023-08-20"),
-              imageUrl: "https://cdn.windowsreport.com/wp-content/uploads/2020/11/Gaming-mouse-min.jpeg",
-            },
-            {
-              id: 10,
-              name: "Mechanical Keyboard",
-              price: "150",
-              createdAt: new Date("2023-08-15"),
-              imageUrl: "https://i.pinimg.com/originals/ad/ce/4f/adce4f29cac66e793fd076652c795249.jpg",
-            },
-            {
-              id: 11,
-              name: "Fitness Tracker",
-              price: "80",
-              createdAt: new Date("2023-08-10"),
-              imageUrl: "https://th.bing.com/th/id/OIP.NvATc9bJK33WLY0SOp0DvgHaJR?rs=1&pid=ImgDetMain",
-            },
-            {
-              id: 12,
-              name: "VR Headset",
-              price: "350",
-              createdAt: new Date("2023-08-01"),
-              imageUrl: "https://th.bing.com/th/id/OIP.roCAOIqOkXpewd23gCXErwAAAA?rs=1&pid=ImgDetMain",
-            },
-          ];
+    const fetchPosts = async () => {
+      setLoading(true);
+      setLoading2(true);
+      
+      try {
+        // Fetch data from Firestore
+        const postCollection = collection(db, "posts");
+        const q = query(postCollection, orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
 
-          // Filter out unwanted posts
-          const filteredPosts = allPosts.filter((post) => {
-            return (
-              post.name !== "Wireless Earbuds" &&
-              post.name !== "Smart Watch" &&
-              post.name !== "Mobile - Samsung Galaxy" &&
-              post.name !== "Laptop - Dell Inspiron"
-            );
-          });
+        const allPosts = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: new Date(doc.data().createdAt), // Convert Firestore timestamp to Date
+        }));
 
-          const allPostsDescendingOrder = filteredPosts.sort((a, b) => b.createdAt - a.createdAt);
-          const allPostsAscendingOrder = [...allPostsDescendingOrder].reverse();
+        const allPostsDescendingOrder = allPosts; // Already sorted by "desc" in query
+        const allPostsAscendingOrder = [...allPosts].reverse(); // Create ascending order copy
 
-          resolve({ allPostsDescendingOrder, allPostsAscendingOrder });
-        }, 1000);
-      });
+        setPosts(allPostsAscendingOrder);
+        setPosts2(allPostsDescendingOrder);
+        setAllPost(allPostsDescendingOrder); // Update context
+        setLoading(false);
+        setLoading2(false);
+      } catch (error) {
+        console.error("Error fetching posts: ", error);
+        setLoading(false);
+        setLoading2(false);
+      }
     };
 
-    setLoading(true);
-    setLoading2(true);
-
-    simulatedFetchPosts().then(({ allPostsDescendingOrder, allPostsAscendingOrder }) => {
-      setPosts(allPostsAscendingOrder); // Set posts for ascending order
-      setPosts2(allPostsDescendingOrder); // Set posts for descending order
-      setAllPost(allPostsDescendingOrder); // Update all posts in context
-      setLoading(false);
-      setLoading2(false);
-    });
+    fetchPosts();
   }, [setAllPost]);
 
   const renderQuickMenuCards = () =>
@@ -147,5 +90,3 @@ function Posts() {
 }
 
 export default Posts;
-
-

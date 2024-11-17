@@ -2,81 +2,61 @@ import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AllPostContext } from "../../contextStore/AllPostContext";
 import { PostContext } from "../../contextStore/PostContext";
-import { useAuth } from '../../contextStore/AuthContext';
+import { useAuth } from "../../contextStore/AuthContext";
 import "./Header.css";
 import SearchIcon from "../../assets/SearchIcon";
 import Arrow from "../../assets/Arrow";
 import SellButton from "../../assets/SellButton";
 import SellButtonPlus from "../../assets/SellButtonPlus";
-
-import { AuthContext } from "../../contextStore/AuthContext";
-
 import Search from "../Search/Search";
-import AccountDropdown from '../AccountDropdown'; // Importing the AccountDropdown component
-import { signOut } from "firebase/auth"; // Importing signOut from Firebase Auth
-import { auth } from "../../firebase"; // Ensure you have Firebase initialized
 
 function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth(); // Using logout from AuthContext
   const { allPost } = useContext(AllPostContext);
-
-  const { setPostContent } = useContext(PostContext);// Firebase Auth user context
-  const navigate = useNavigate();
-  
-
   const { setPostContent } = useContext(PostContext);
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
 
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
-  const [dropdownOpen, setDropdownOpen] = useState(false); // State for dropdown visibility
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Function to handle search filtering
   const handleFilter = (event) => {
     const searchWord = event.target.value;
     setWordEntered(searchWord);
-    const newFilter = allPost
-      ? allPost.filter((value) =>
-          value.name.toLowerCase().includes(searchWord.toLowerCase())
+
+    if (!allPost) return;
+
+    const filtered = searchWord
+      ? allPost.filter((post) =>
+          post.name.toLowerCase().includes(searchWord.toLowerCase())
         )
       : [];
 
-    if (searchWord === "") {
-      setFilteredData([]);
-    } else {
-      setFilteredData(newFilter);
-    }
+    setFilteredData(filtered);
   };
 
   const clearInput = () => {
-    setFilteredData([]);
     setWordEntered("");
+    setFilteredData([]);
   };
 
-  const handleSelectedSearch = (value) => {
-    setPostContent(value);
+  const handleSelectedSearch = (post) => {
+    setPostContent(post);
     navigate("/view");
   };
 
   const handleEmptyClick = () => {
-    alert("No items found.., please search by product name");
+    alert("No items found. Please refine your search!");
   };
 
-  // Function to handle Logout
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await logout();
       navigate("/login");
     } catch (error) {
       console.error("Error logging out:", error);
     }
-  const handleSellClick = () => {
-    navigate('/create'); // Open the post ad form directly
-  };
-
-  const handleLoginClick = () => {
-    navigate('/login');
   };
 
   return (
@@ -92,21 +72,23 @@ function Header() {
             aria-label="Search specific product"
           />
           {filteredData.length === 0 ? (
-            <div onClick={handleEmptyClick}>
+            <div onClick={handleEmptyClick} role="button" tabIndex="0" aria-label="Search button">
               <SearchIcon />
             </div>
           ) : (
-            <div id="clearBtn" onClick={clearInput}>
+            <div id="clearBtn" onClick={clearInput} role="button" tabIndex="0" aria-label="Clear search">
               <Arrow />
             </div>
           )}
-          {filteredData.length !== 0 && (
+          {filteredData.length > 0 && (
             <div className="dataResult-header">
               {filteredData.slice(0, 15).map((value, key) => (
                 <div
                   key={key}
                   className="dataItem-header"
                   onClick={() => handleSelectedSearch(value)}
+                  role="button"
+                  tabIndex="0"
                 >
                   <p>{value.name}</p>
                 </div>
@@ -129,54 +111,51 @@ function Header() {
         {/* User Account & Dropdown */}
         <div className="loginPage">
           {user ? (
-
-            <div className="userMenu" onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <div
+              className="userMenu"
+              onClick={() => setDropdownOpen((prev) => !prev)}
+              role="button"
+              tabIndex="0"
+              aria-label="Toggle user menu"
+            >
               <span>Welcome, {user.displayName || "User"}</span>
               <Arrow />
               {dropdownOpen && (
                 <div className="dropdownMenu">
-                  <Link to="/dashboard">
-                    <div className="dropdownItem">My Account</div>
+                  <Link to="/dashboard" className="dropdownItem" aria-label="My Account">
+                    My Account
                   </Link>
-                  <div className="dropdownItem" onClick={handleLogout}>
+                  <div
+                    className="dropdownItem"
+                    onClick={handleLogout}
+                    role="button"
+                    tabIndex="0"
+                    aria-label="Logout"
+                  >
                     Logout
                   </div>
                 </div>
               )}
             </div>
-
-            <span>{user.displayName}</span>
-
           ) : (
-            <Link to="/login">
+            <Link to="/login" aria-label="Login">
               <span>Login</span>
             </Link>
           )}
           <hr />
         </div>
 
-
         {/* Sell Button */}
-        <Link to="/create">
-          <div className="sellMenu">
-            <SellButton />
-            <div className="sellMenuContent">
-              <SellButtonPlus />
-              <span>SELL</span>
-            </div>
-
-        <div className="sellMenu" onClick={handleSellClick}>
+        <Link to="/create" className="sellMenu" aria-label="Create a post">
           <SellButton />
           <div className="sellMenuContent">
             <SellButtonPlus />
             <span>SELL</span>
-
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );
 }
 
 export default Header;
-

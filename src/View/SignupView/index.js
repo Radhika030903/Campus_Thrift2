@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function SignupView() {
   const navigate = useNavigate();
@@ -31,9 +31,10 @@ function SignupView() {
     }
 
     if (!validatePassword(password)) {
-      toast.error("Password must be at least 8 characters long, include a number and a special character.", {
-        position: "bottom-center",
-      });
+      toast.error(
+        "Password must be at least 8 characters long, include a number and a special character.",
+        { position: "bottom-center" }
+      );
       return;
     }
 
@@ -55,7 +56,6 @@ function SignupView() {
         });
         toast.success("User registered successfully!", { position: "top-center" });
 
-
         // Redirect to Login Page
         navigate("/login");
       }
@@ -64,22 +64,6 @@ function SignupView() {
       toast.error(error.message, { position: "bottom-center" });
     } finally {
       setLoading(false);
-
-      // Store user data in Firestore
-      toast.success("User registered successfully!", {
-        position: "top-center",
-      });
-
-      // Wait a brief moment for the toast to be visible
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
-    } catch (error) {
-      console.error(error.message);
-      toast.error(error.message, {
-        position: "bottom-center",
-      });
-
     }
   };
 
@@ -174,7 +158,9 @@ function SignupView() {
 
             <button
               type="submit"
-              className={`w-full py-2 text-white bg-blue-600 rounded-md ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`w-full py-2 text-white bg-blue-600 rounded-md ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               disabled={loading}
             >
               {loading ? "Signing up..." : "Sign Up"}

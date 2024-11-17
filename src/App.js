@@ -1,14 +1,12 @@
 import React from "react";
 
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+
 import { AuthProvider, useAuth } from './contextStore/AuthContext'; // Moved imports to top
 import PostProvider from './contextStore/PostContext';
 import AllPostProvider from './contextStore/AllPostContext';
-import LoginView from "./View/LoginView";
-import SignupView from "./View/SignupView";
-import HomeView from "./View/Homeview"; // Corrected import name
-import Posts from "./Components/Post/Post";
-import Product from "./Components/Product/Product";
+
+
+
 import Dashboard from './Components/Dashboard';
 import Header from './Components/Header/Header.js';
 
@@ -18,9 +16,8 @@ import SignupView from "./View/SignupView";
 import HomeView from "./View/Homeview";
 import Posts from "./Components/Post/Post"; // Import Posts component
 import Product from "./Components/Product/Product"; // Import ProductDetail component
-import AuthProvider, { AuthContext } from './contextStore/AuthContext';
-import PostProvider from './contextStore/PostContext';
-import AllPostProvider from './contextStore/AllPostContext';
+
+
 import CreatePost from "./Components/CreatePost/CreatePost";
 import 'react-toastify/dist/ReactToastify.css';
 
