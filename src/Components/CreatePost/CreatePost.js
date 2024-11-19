@@ -9,6 +9,8 @@ function CreatePost() {
     const navigate = useNavigate();
     const { user } = useAuth(); // Use useAuth to get user details
     const [formData, setFormData] = useState({
+        sellerName: '',
+        contactNumber: '',
         name: '',
         category: '',
         price: '',
@@ -53,6 +55,30 @@ function CreatePost() {
             <div className="postForm">
                 <h2>POST ITEM</h2>
                 <form onSubmit={handleSubmit}>
+                    <div className="formInput">
+                        <label>Seller's Name</label>
+                        <input
+                            type="text"
+                            name="sellerName"
+                            value={formData.sellerName}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="formInput">
+                        <label>Contact Number</label>
+                        <input
+                            type="tel"
+                            name="contactNumber"
+                            value={formData.contactNumber}
+                            onChange={handleChange}
+                            pattern="[0-9]{10}"
+                            placeholder="Enter 10-digit mobile number"
+                            required
+                        />
+                    </div>
+
                     <div className="formInput">
                         <label>Item Name</label>
                         <input
