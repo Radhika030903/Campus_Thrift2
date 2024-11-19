@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import { auth, db } from '../firebase'; // Adjust this path based on your project structure
+import { auth, db } from '../firebase';
+import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import PostCards from './PostCards/PostCards';
 
 const Dashboard = () => {
   const [user, setUser] = useState({
     profilePicture: null,
     name: '',
     email: '',
-    contact: '',
-    address: '',
-    university: '',
-    verified: false,
+    institute: '',
+    state: '',
+    city: '',
   });
 
   const [listings, setListings] = useState({
@@ -19,252 +20,168 @@ const Dashboard = () => {
     bought: [],
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState('profile'); // State to track the active tab
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState('');
+  const [showPopup, setShowPopup] = useState(true); // State for controlling popup visibility
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = auth.currentUser?.uid; // Get current user's ID from Firebase auth
-      if (userId) {
-        try {
-          const userDoc = await db.collection('users').doc(userId).get();
-          if (userDoc.exists) {
-            setUser(userDoc.data());
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
+  // Function to fetch user data based on email
+  const fetchUserData = async (userEmail) => {
+    try {
+      const usersRef = collection(db, 'User');  // Ensure the collection name is correct
+      const q = query(usersRef, where('email', '==', userEmail));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        console.log('No user found with this email');
+        return;
       }
-    };
 
-    const fetchUserListings = async () => {
-      const userId = auth.currentUser?.uid;
-      if (userId) {
-        try {
-          // Fetch Active Listings
-          const activeSnapshot = await db.collection('listings').where('userId', '==', userId).where('status', '==', 'Available').get();
-          const activeListings = activeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-          // Fetch Sold Listings
-          const soldSnapshot = await db.collection('listings').where('userId', '==', userId).where('status', '==', 'Sold').get();
-          const soldListings = soldSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-          // Fetch Bought Listings
-          const boughtSnapshot = await db.collection('purchases').where('buyerId', '==', userId).get();
-          const boughtListings = boughtSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-          setListings({
-            active: activeListings,
-            sold: soldListings,
-            bought: boughtListings,
-          });
-        } catch (error) {
-          console.error('Error fetching listings:', error);
-        }
-      }
-    };
-
-    fetchUserData();
-    fetchUserListings();
-  }, []);
-
-  const handleEditProfile = () => {
-    setIsEditing(true);
-  };
-
-  const handleSaveProfile = () => {
-    setIsEditing(false);
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-  };
-
-  const handleProfilePictureChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setUser({ ...user, profilePicture: URL.createObjectURL(file) });
+      const userDocSnap = querySnapshot.docs[0];
+      const userData = userDocSnap.data();
+      setUser({
+        name: userData.name || '',
+        email: userData.email || '',
+        institute: userData.institute || '',
+        state: userData.state || '',
+        city: userData.city || '',
+        createdAt: userData.createdAt || new Date(),
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
+  // Function to fetch user listings
+  const fetchUserListings = async (userEmail) => {
+    try {
+      const listingsRef = collection(db, 'listings');
+      const activeQuery = query(
+        listingsRef,
+        where('userEmail', '==', userEmail),
+        where('status', '==', 'Available')
+      );
+      const activeSnapshot = await getDocs(activeQuery);
+      const activeListings = activeSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      setListings(prev => ({
+        ...prev,
+        active: activeListings
+      }));
+    } catch (error) {
+      console.error('Error fetching listings:', error);
+    }
   };
 
-  const handleListingAction = (id, action) => {
-    alert(`${action} action on listing ID: ${id}`);
+  // Function to fetch posts
+  const fetchPosts = async () => {
+    try {
+      const postCollection = collection(db, 'posts');
+      const q = query(postCollection, orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
+
+      const allPosts = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate?.() || new Date(data.createdAt) || new Date()
+        };
+      });
+
+      setPosts(allPosts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
   };
 
+  // Effect hook to fetch data when email is entered and valid
+  useEffect(() => {
+    if (email) {
+      setLoading(true);  // Set loading state to true when fetching starts
+
+      // Convert the email to lowercase to ensure case-insensitive comparison
+      const userEmailLowercase = email.toLowerCase();
+
+      // Fetch user data and related listings and posts based on the email
+      Promise.all([
+        fetchUserData(userEmailLowercase),
+        fetchUserListings(userEmailLowercase),
+        fetchPosts()
+      ]).finally(() => {
+        setLoading(false);  // Set loading state to false after data is fetched
+      });
+    }
+  }, [email]);  // Trigger when the email state changes
+
+  // Handle the form submission for the email input
+  const handleSubmitEmail = () => {
+    if (email) {
+      setShowPopup(false);  // Hide the popup when email is submitted
+    } else {
+      alert("Please enter a valid email.");
+    }
+  };
+
+  // If the popup is shown, display it
+  if (showPopup) {
+    return (
+      <div className="email-popup">
+        <h2>Welcome! Please Enter Your Email</h2>
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button onClick={handleSubmitEmail}>Submit</button>
+      </div>
+    );
+  }
+
+  // Show loading state while data is being fetched
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Render the Dashboard once data is fetched
   return (
     <div className="dashboard-container">
-      {!user.verified && (
-        <div className="status-warning">
-          Your account is still in Pending State, <span>Verify Mobile</span> to activate.
+      <div className="profile-info">
+        <h2>Profile Information</h2>
+        <div className="profile-details">
+          <p>Name: {user.name}</p>
+          <p>Email: {user.email}</p>
+          <p>Institute: {user.institute}</p>
+          <p>State: {user.state}</p>
+          <p>City: {user.city}</p>
         </div>
-      )}
-
-      <div className="dashboard-tabs">
-        <button
-          className={`tab ${activeTab === 'profile' ? 'active' : ''}`}
-          onClick={() => handleTabChange('profile')}
-        >
-          Profile
-        </button>
-        <button
-          className={`tab ${activeTab === 'listings' ? 'active' : ''}`}
-          onClick={() => handleTabChange('listings')}
-        >
-          My Listings
-        </button>
-        <button
-          className={`tab ${activeTab === 'settings' ? 'active' : ''}`}
-          onClick={() => handleTabChange('settings')}
-        >
-          Settings
-        </button>
       </div>
 
-      <div className="dashboard-content">
-        {activeTab === 'profile' && (
-          <div className="profile-info">
-            <h2>Profile Information</h2>
-            <div className="profile-picture">
-              <img
-                src={user.profilePicture || 'https://via.placeholder.com/150'}
-                alt="Profile"
-              />
-              <input type="file" onChange={handleProfilePictureChange} />
+      <div className="user-listings">
+        <h2>My Listings</h2>
+        {listings.active.length > 0 ? (
+          listings.active.map((listing) => (
+            <div key={listing.id} className="listing-item">
+              <h4>{listing.name}</h4>
+              <p>Price: {listing.price}</p>
             </div>
-            <div className="profile-details">
-              {isEditing ? (
-                <>
-                  <input
-                    type="text"
-                    value={user.name}
-                    onChange={(e) => setUser({ ...user, name: e.target.value })}
-                    placeholder="Full Name"
-                  />
-                  <input
-                    type="email"
-                    value={user.email}
-                    onChange={(e) => setUser({ ...user, email: e.target.value })}
-                    placeholder="Email"
-                  />
-                  <input
-                    type="text"
-                    value={user.contact}
-                    onChange={(e) => setUser({ ...user, contact: e.target.value })}
-                    placeholder="Contact Number"
-                  />
-                  <input
-                    type="text"
-                    value={user.university}
-                    onChange={(e) => setUser({ ...user, university: e.target.value })}
-                    placeholder="University"
-                  />
-                  <input
-                    type="text"
-                    value={user.address}
-                    onChange={(e) => setUser({ ...user, address: e.target.value })}
-                    placeholder="Address"
-                  />
-                </>
-              ) : (
-                <>
-                  <input type="text" value={user.name} readOnly placeholder="Full Name" />
-                  <input type="email" value={user.email} readOnly placeholder="Email" />
-                  <input type="text" value={user.contact} readOnly placeholder="Contact Number" />
-                  <input type="text" value={user.university} readOnly placeholder="University" />
-                  <input type="text" value={user.address} readOnly placeholder="Address" />
-                </>
-              )}
-            </div>
-            <button
-              className="edit-profile-btn"
-              onClick={isEditing ? handleSaveProfile : handleEditProfile}
-            >
-              {isEditing ? 'Save Profile' : 'Edit Profile'}
-            </button>
-            {isEditing && (
-              <button className="cancel-profile-btn" onClick={handleCancelEdit}>
-                Cancel
-              </button>
-            )}
-          </div>
+          ))
+        ) : (
+          <p>No active listings</p>
         )}
+      </div>
 
-        {activeTab === 'listings' && (
-          <div className="user-listings">
-            <h2>My Listings</h2>
-
-            <div className="listings-container">
-              <h3>Active Listings</h3>
-              {listings.active.length > 0 ? (
-                listings.active.map((listing) => (
-                  <div key={listing.id} className="listing-item">
-                    <h4>{listing.name}</h4>
-                    <p>Price: {listing.price}</p>
-                    <p>Description: {listing.description}</p>
-                    <p>Status: {listing.status}</p>
-                    <p>Date Listed: {listing.date}</p>
-                    <div className="listing-actions">
-                      <button onClick={() => handleListingAction(listing.id, 'Edit')}>Edit</button>
-                      <button onClick={() => handleListingAction(listing.id, 'Delete')}>Delete</button>
-                      {listing.status !== 'Sold' && (
-                        <button onClick={() => handleListingAction(listing.id, 'Mark as Sold')}>
-                          Mark as Sold
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No active listings</p>
-              )}
-            </div>
-
-            <div className="listings-container">
-              <h3>Sold Listings</h3>
-              {listings.sold.length > 0 ? (
-                listings.sold.map((listing) => (
-                  <div key={listing.id} className="listing-item">
-                    <h4>{listing.name}</h4>
-                    <p>Price: {listing.price}</p>
-                    <p>Description: {listing.description}</p>
-                    <p>Status: {listing.status}</p>
-                    <p>Date Sold: {listing.date}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No sold listings</p>
-              )}
-            </div>
-
-            <div className="listings-container">
-              <h3>Bought Listings</h3>
-              {listings.bought.length > 0 ? (
-                listings.bought.map((listing) => (
-                  <div key={listing.id} className="listing-item">
-                    <h4>{listing.name}</h4>
-                    <p>Price: {listing.price}</p>
-                    <p>Description: {listing.description}</p>
-                    <p>Seller: {listing.sellerName}</p>
-                    <p>Date Purchased: {listing.date}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No purchased listings</p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'settings' && (
-          <div className="settings">
-            <h2>Settings</h2>
-            {/* Settings content */}
-          </div>
-        )}
+      <div className="user-posts">
+        <h2>Recent Posts</h2>
+        <div className="post-cards">
+          {posts.map((post) => (
+            <PostCards key={post.id} product={post} index={post.id} />
+          ))}
+        </div>
       </div>
     </div>
   );
