@@ -1,15 +1,20 @@
-/* From Uiverse.io by MohamedSSuhail */
+/* Root-level custom properties (CSS variables) */
 :root {
     --main-color: #000;
-    --bg-color: #64ccc5;
-    --highlight-color: #e67e22; /* From the second CSS for buttons */
+    /* --bg-color: #eceded99; */
+    --highlight-color: #e67e22;
     --button-hover-color: #f39c12;
   }
   
-  .product-detail-container {
+  .container {
     padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 90vw;
+    height: 90vh;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
   
   .product-detail {
@@ -17,32 +22,44 @@
     justify-content: space-between;
     align-items: flex-start;
     padding: 20px;
-    background-color: var(--bg-color); /* Light background from first CSS */
+    width: 90vw;
+    background-color: var(--bg-color);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 20px; /* Rounded corners like the card */
+    border-radius: 20px;
+    /* Initially set a min-height to ensure good appearance even on small devices */
+    min-height: 60vh;
   }
   
   .product-img {
     flex: 1;
     padding: 20px;
+   
   }
   
   .product-img img {
-    max-width: 100%;
+    width: 25vw; /* Default for larger screens */
     height: auto;
     border-radius: 10px;
+    /* Max width to prevent overly large images */
+    max-width: 100%;
   }
   
   .product-info {
     flex: 2;
-    padding: 20px;
+    margin-top: 50px;
+    /* Adding some spacing around the info */
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+  
+    justify-content:baseline;
   }
   
   .product-title {
-    font-size: 2em;
+    font-size: 3em;
     font-weight: bold;
     margin-bottom: 10px;
-    color: var(--main-color); /* Color from Uiverse.io */
+    color: var(--main-color);
   }
   
   .product-description {
@@ -54,7 +71,7 @@
   .product-price {
     font-size: 1.5em;
     font-weight: bold;
-    color: var(--highlight-color); /* Using the highlight color from second CSS */
+    color: var(--highlight-color);
     margin-top: 20px;
   }
   
@@ -67,129 +84,98 @@
     border-top: 1px solid #ddd;
   }
   
-  .product-button button {
-    background-color: var(--highlight-color); /* Using highlight color */
+  .product-button {
+    background-color: var(--highlight-color);
     color: white;
     padding: 10px 20px;
     font-size: 1.2em;
+    margin-top: 10px;
     border: none;
     border-radius: 30px;
     cursor: pointer;
     transition: 0.3s ease-in-out;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow around the button */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  .product-button button:hover {
-    background-color: var(--button-hover-color); /* Hover effect with a brighter color */
+  .product-button:hover {
+    background-color: var(--button-hover-color);
   }
   
-  .card {
-    --main-color: var(--main-color);
-    --bg-color: var(--bg-color);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    width: 300px;
-    padding: 25px;
-    background: var(--bg-color);
-    border-radius: 20px;
+  /* Media Queries for Responsiveness */
+  @media only screen and (max-width: 890px) {
+    .product-detail {
+      flex-direction: column !important;
+      justify-content: flex-start;
+      align-items: center;
+      margin-top: 0;
+    }
+  
+    .product-img {
+      width: 90vw; /* Adjust image size for smaller screens */
+      padding: 0;
+      display: flex;
+      text-align: center;
+      align-items: center;
+      align-content: center;
+      justify-content: center;
+    }
+  
+    .product-img img {
+      width: 80vw; /* Image width adjusted for smaller screens */
+      max-width: 100%;
+    }
+  
+    .product-info {
+      flex: 1;
+      padding: 20px;
+      width: 90vw;
+  
+      margin-top:0; 
+    
+    }
+  
+    .product-title {
+      font-size: 2.5em; /* Adjust title size for smaller devices */
+    }
+  
+    .product-description {
+      font-size: 1.1em;
+      line-height: 1.4;
+    }
+  
+    .product-price {
+      font-size: 1.3em;
+    }
+  
+    .product-button {
+      width: 100%;
+      font-size: 1.1em;
+      padding: 15px 0;
+      margin-top: 20px; /* Additional space on mobile */
+    }
+  
+    .product-footer {
+      margin-top: 20px;
+      text-align: center;
+    }
   }
   
-  .card__wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+  @media only screen and (max-width: 600px) {
+    .product-title {
+      font-size: 2.2em; /* Reduce font size for smaller screens like phones */
+    }
   
-  .card___wrapper-acounts {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    z-index: 1;
-    cursor: pointer;
-  }
+    .product-description {
+      font-size: 1em;
+      line-height: 1.5;
+    }
   
-  .card___wrapper-acounts > div:nth-child(2) {
-    position: absolute;
-    left: 25px;
-    z-index: -1;
-  }
+    .product-price {
+      font-size: 1.2em;
+    }
   
-  .card___wrapper-acounts > div:nth-child(3) {
-    position: absolute;
-    left: 50px;
-    z-index: -2;
+    .product-button {
+      font-size: 1.1em;
+      padding: 12px 0;
+    }
   }
-  
-  .card__score {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 500;
-    font-size: 16px;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-    background: var(--main-color);
-  }
-  
-  .card__acounts {
-    width: 42px;
-    height: 42px;
-  }
-  
-  .card__acounts svg {
-    width: 100%;
-    height: 100%;
-  }
-  
-  .card__menu {
-    width: 40px;
-    height: 40px;
-    background: #dafffb;
-    border-radius: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .card__title {
-    margin-top: 50px;
-    font-weight: 900;
-    font-size: 25px;
-    color: var(--main-color);
-  }
-  
-  .card__subtitle {
-    margin-top: 15px;
-    font-weight: 400;
-    font-size: 15px;
-    color: var(--main-color);
-  }
-  
-  .card__indicator {
-    margin-top: 50px;
-    font-weight: 500;
-    font-size: 14px;
-    color: var(--main-color);
-  }
-  
-  .card__progress progress {
-    width: 100%;
-    height: 4px;
-    border-radius: 100px;
-  }
-  
-  .card__progress progress::-webkit-progress-bar {
-    background-color: #00000030;
-    border-radius: 100px;
-  }
-  
-  .card__progress progress::-webkit-progress-value {
-    background-color: var(--main-color);
-    border-radius: 100px;
-  }
-  
