@@ -74,10 +74,16 @@ const Productdetails = () => {
       padding: '20px',
     },
     productTitle: {
-      fontSize: '2em',
+      fontSize: '2.5em',  // Increased size for product name prominence
       fontWeight: 'bold',
       marginBottom: '10px',
       color: 'var(--main-color)',
+    },
+    sellerName: {
+      fontSize: '1.3em', // Smaller but still prominent
+      fontWeight: 'normal',
+      color: '#333',
+      marginTop: '10px',
     },
     productDescription: {
       fontSize: '1.1em',
@@ -124,7 +130,11 @@ const Productdetails = () => {
 
         {/* Product Information Section */}
         <div style={styles.productInfo}>
-          <h1 style={styles.productTitle}>{product.name}</h1>
+          <h1 style={styles.productTitle}>{product.name}</h1>  {/* Product name highlighted */}
+          
+          {/* Seller Name */}
+          <p style={styles.sellerName}><strong>Seller:</strong> {product.name || 'Anonymous'}</p>  {/* Seller name displayed in product info */}
+
           <p style={styles.productDescription}>{product.description}</p>
 
           <p><strong>Category:</strong> {product.category}</p>
@@ -146,13 +156,10 @@ const Productdetails = () => {
         </div>
       </div>
 
-      {/* Product Footer Section */}
-      <div style={styles.productFooter}>
-        <p><strong>Seller:</strong> {product.userId || 'Anonymous'}</p>
-      </div>
+      {/* Product Footer Section (optional, since seller's name is already added in the main product info) */}
+      
     </div>
   );
-}
+};
 
 export default Productdetails;
-
