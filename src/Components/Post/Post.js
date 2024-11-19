@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // Import Link to navigate to product details
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase"; // Adjust the path to your Firebase config
 import "./Post.css";
-import PostCards from "../PostCards/PostCards";
+import PostCards from "../PostCards/PostCards"; // Assuming this component exists
 import { AllPostContext } from "../../contextStore/AllPostContext";
 
 function Posts() {
@@ -17,7 +17,7 @@ function Posts() {
     const fetchPosts = async () => {
       setLoading(true);
       setLoading2(true);
-      
+
       try {
         // Fetch data from Firestore
         const postCollection = collection(db, "posts");
@@ -48,17 +48,23 @@ function Posts() {
     fetchPosts();
   }, [setAllPost]);
 
+  // Render cards in ascending order
   const renderQuickMenuCards = () =>
     posts.map((product, index) => (
       <div className="quick-menu-cards" key={index}>
-        <PostCards product={product} index={index} />
+        <Link to={`/view/${product.id}`}> {/* Add Link to the Product Detail Page */}
+          <PostCards product={product} index={index} />
+        </Link>
       </div>
     ));
 
+  // Render cards in descending order (only showing the first 4 products)
   const renderFreshRecommendationCards = () =>
     posts2.slice(0, 4).map((product, index) => (
       <div className="fresh-recommendation-card" key={index}>
-        <PostCards product={product} index={index} />
+        <Link to={`/view/${product.id}`}> {/* Add Link to the Product Detail Page */}
+          <PostCards product={product} index={index} />
+        </Link>
       </div>
     ));
 
@@ -68,7 +74,7 @@ function Posts() {
         <div className="moreView">
           <div className="heading">
             <span>Quick Menu</span>
-            <Link to="./viewmore">
+            <Link to="/viewmore">
               <span>View more</span>
             </Link>
           </div>
@@ -77,6 +83,7 @@ function Posts() {
           </div>
         </div>
       )}
+
       <div className="recommendations">
         <div className="heading">
           <span>Fresh recommendations</span>
