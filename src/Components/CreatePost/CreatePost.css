@@ -12,7 +12,7 @@
 }
 
 .postForm {
-    background:white;
+    background: white;
     padding: 2rem;
     border-radius: 8px;
     width: 90%;
@@ -80,7 +80,7 @@
 }
 
 .drop-zone {
-    border: 2px dashed #3A1E08;
+    border: 1px solid #3A1E08;
     border-radius: 4px;
     padding: 20px;
     text-align: center;
