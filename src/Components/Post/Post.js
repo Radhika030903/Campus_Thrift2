@@ -5,6 +5,7 @@ import { db } from "../../firebase"; // Adjust the path to your Firebase config
 import "./Post.css";
 import PostCards from "../PostCards/PostCards"; // Assuming this component exists
 import { AllPostContext } from "../../contextStore/AllPostContext";
+import uniqueFeaturesImage from '../../assets/images/unique-features.jpg'; // Adjust the path as necessary
 
 function Posts() {
   const { setAllPost } = useContext(AllPostContext);
@@ -83,6 +84,10 @@ function Posts() {
           </div>
         </div>
       )}
+
+      <div className="imageSection">
+        <img src={uniqueFeaturesImage} alt="Unique Features" />
+      </div>
 
       <div className="recommendations">
         <div className="heading">
