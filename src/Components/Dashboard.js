@@ -14,12 +14,6 @@ const Dashboard = () => {
     city: '',
   });
 
-  const [listings, setListings] = useState({
-    active: [],
-    sold: [],
-    bought: [],
-  });
-
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
@@ -49,30 +43,6 @@ const Dashboard = () => {
       });
     } catch (error) {
       console.error('Error fetching user data:', error);
-    }
-  };
-
-  // Function to fetch user listings
-  const fetchUserListings = async (userEmail) => {
-    try {
-      const listingsRef = collection(db, 'listings');
-      const activeQuery = query(
-        listingsRef,
-        where('userEmail', '==', userEmail),
-        where('status', '==', 'Available')
-      );
-      const activeSnapshot = await getDocs(activeQuery);
-      const activeListings = activeSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-
-      setListings(prev => ({
-        ...prev,
-        active: activeListings
-      }));
-    } catch (error) {
-      console.error('Error fetching listings:', error);
     }
   };
 
@@ -106,10 +76,9 @@ const Dashboard = () => {
       // Convert the email to lowercase to ensure case-insensitive comparison
       const userEmailLowercase = email.toLowerCase();
 
-      // Fetch user data and related listings and posts based on the email
+      // Fetch user data and related posts based on the email
       Promise.all([
         fetchUserData(userEmailLowercase),
-        fetchUserListings(userEmailLowercase),
         fetchPosts()
       ]).finally(() => {
         setLoading(false);  // Set loading state to false after data is fetched
@@ -161,22 +130,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="user-listings">
-        <h2>My Listings</h2>
-        {listings.active.length > 0 ? (
-          listings.active.map((listing) => (
-            <div key={listing.id} className="listing-item">
-              <h4>{listing.name}</h4>
-              <p>Price: {listing.price}</p>
-            </div>
-          ))
-        ) : (
-          <p>No active listings</p>
-        )}
-      </div>
-
       <div className="user-posts">
-        <h2>Recent Posts</h2>
+        <h2>My Listings</h2>
         <div className="post-cards">
           {posts.map((post) => (
             <PostCards key={post.id} product={post} index={post.id} />
