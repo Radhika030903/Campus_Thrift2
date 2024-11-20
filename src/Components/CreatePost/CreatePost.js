@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contextStore/AuthContext'; // Use useAuth hook instead of useContext
+import { useAuth } from '../../contextStore/AuthContext';
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "../../firebase"; // Adjust the path to your Firebase config
+import { storage, db } from "../../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import './CreatePost.css';
 
 function CreatePost() {
     const navigate = useNavigate();
-    const { user } = useAuth(); // Use useAuth to get user details
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         sellerName: '',
         contactNumber: '',
@@ -19,6 +20,8 @@ function CreatePost() {
         age: '',
         imageUrl: '',
     });
+    const [selectedImages, setSelectedImages] = useState([]);
+    const [isDragOver, setIsDragOver] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,25 +31,62 @@ function CreatePost() {
         }));
     };
 
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setSelectedImages(files);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        const files = Array.from(e.dataTransfer.files);
+        setSelectedImages(files);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const postRef = collection(db, "posts");
-            const newPost = {
-                ...formData,
-                userId: user?.uid || "anonymous", // Use user from context
-                createdAt: new Date().toISOString(),
+            if (!user) {
+                alert("Please login to post items");
+                return;
+            }
+
+            if (!formData.imageUrl) {
+                alert("Please provide an image URL");
+                return;
+            }
+
+            const postData = {
+                sellerName: formData.sellerName,
+                contactNumber: formData.contactNumber,
+                name: formData.name,
+                category: formData.category,
+                price: formData.price,
+                condition: formData.condition,
+                age: formData.age,
+                description: formData.description,
+                imageUrls: [formData.imageUrl],
+                userId: user.uid,
+                createdAt: new Date().toISOString()
             };
 
-            await addDoc(postRef, newPost);
-
-            console.log("Post added successfully!");
-            alert("Your post has been submitted!");
+            await addDoc(collection(db, "posts"), postData);
+            alert("Post created successfully!");
             navigate("/");
+
         } catch (error) {
-            console.error("Error adding document: ", error);
-            alert("Failed to submit your post. Please try again.");
+            console.error("Error creating post:", error);
+            alert(`Error creating post: ${error.message}`);
         }
     };
 
@@ -104,7 +144,7 @@ function CreatePost() {
                             <option value="Cameras & Lenses">Cameras & Lenses</option>
                             <option value="Tablets">Tablets</option>
                             <option value="Books">Books</option>
-                            <option value="Other Electronics">Other Electronics</option>
+                            <option value="Others">Others</option>
                         </select>
                     </div>
 
@@ -148,6 +188,17 @@ function CreatePost() {
                     </div>
 
                     <div className="formInput">
+                        <label>Description</label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            required
+                            rows="4"
+                        ></textarea>
+                    </div>
+
+                    <div className="formInput">
                         <label>Image URL</label>
                         <input
                             type="url"
@@ -157,17 +208,6 @@ function CreatePost() {
                             placeholder="Enter image URL"
                             required
                         />
-                    </div>
-
-                    <div className="formInput">
-                        <label>Description</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            required
-                            rows="4"
-                        ></textarea>
                     </div>
 
                     <button type="submit" className="submitBtn">Post Now</button>
