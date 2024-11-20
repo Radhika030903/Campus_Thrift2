@@ -67,7 +67,7 @@ const Productdetails = () => {
             <button
               className="product-button"
             >
-              Contact Seller
+              Contact seller:+91 {product.contactNumber}
             </button>
           </div>
         </div>

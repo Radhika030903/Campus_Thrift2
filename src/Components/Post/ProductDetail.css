@@ -113,6 +113,7 @@
     .product-img {
       width: 90vw; /* Adjust image size for smaller screens */
       padding: 0;
+      margin-top: 50px;
       display: flex;
       text-align: center;
       align-items: center;
