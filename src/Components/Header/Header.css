@@ -1,12 +1,13 @@
 .headerParentDiv {
-  padding: 10px;
+  padding: 1px;
   background-color: #ffce32;
-  /* Apply dark yellow background */
   position: fixed;
-  width: 100vw;
+  width: 100%;
+  max-width: 12000px;
   z-index: 999;
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.032), 0 20px 20px -10px rgba(0, 0, 0, 0.3);
-  /* Add shadow similar to signup form */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .headerChildDiv {
@@ -14,11 +15,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 20px;
+  gap: 15px;
 }
 
 .placeSearch {
-  width: 16em;
-  height: 48px;
+  width: 14em;
+  height: 40px;
   display: flex;
   align-items: center;
   padding: 0 8px;
@@ -38,9 +41,9 @@
 }
 
 .productSearch {
-  width: 35em;
-  height: 48px;
-  margin-left: 2em;
+  width: 30em;
+  height: 40px;
+  margin-left: 1em;
   border-radius: 4px;
 }
 
@@ -115,7 +118,7 @@
 
 .dataResult-header {
   position: absolute;
-  top: 60px;
+  top: 40px;
   left: 85px;
   width: 16em;
   height: 150px;
@@ -154,4 +157,9 @@
 .login-span:hover,
 .logout-span:hover {
   color: #00a49f;
+}
+
+.logoImage {
+  width: 120px;
+  height: 80px;
 }

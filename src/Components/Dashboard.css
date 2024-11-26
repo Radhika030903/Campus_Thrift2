@@ -249,7 +249,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
+  background-color: rgb(240, 231, 115);
   padding: 25px;
   border-radius: 10px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
@@ -276,7 +276,7 @@
 
 .email-popup button {
   padding: 12px 24px;
-  background-color: #007bff;
+  background-color: #ffce32;
   color: white;
   border: none;
   border-radius: 5px;
@@ -286,7 +286,7 @@
 }
 
 .email-popup button:hover {
-  background-color: #0056b3;
+  background-color: #ffce32;
 }
 
 /* Responsive Styling */

@@ -9,6 +9,7 @@ import Arrow from "../../assets/Arrow";
 import SellButton from "../../assets/SellButton";
 import SellButtonPlus from "../../assets/SellButtonPlus";
 import Search from "../Search/Search";
+import Logo from "../../assets/logo_transparent.png"; // Assuming you have added the logo in this path
 
 function Header() {
   const { user, logout } = useAuth(); // Using logout from AuthContext
@@ -19,6 +20,7 @@ function Header() {
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [language, setLanguage] = useState("ENGLISH");
 
   // Function to handle search filtering
   const handleFilter = (event) => {
@@ -59,9 +61,18 @@ function Header() {
     }
   };
 
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === "ENGLISH" ? "HINDI" : "ENGLISH"));
+  };
+
   return (
     <div className="headerParentDiv">
       <div className="headerChildDiv">
+        {/* Logo */}
+        <div className="logo">
+          <img src={Logo} alt="Logo" className="logoImage" />
+        </div>
+
         {/* Search Input */}
         <div className="placeSearch">
           <input
@@ -97,14 +108,9 @@ function Header() {
           )}
         </div>
 
-        {/* Product Search */}
-        <div className="productSearch">
-          <Search />
-        </div>
-
         {/* Language Selector */}
-        <div className="language">
-          <span>ENGLISH</span>
+        <div className="language" onClick={toggleLanguage} role="button" tabIndex="0" aria-label="Toggle language">
+          <span>{language}</span>
           <Arrow />
         </div>
 
