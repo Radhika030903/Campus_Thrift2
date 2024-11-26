@@ -16,7 +16,7 @@ function PostCards({ product }) {
       }}
     >
       <div className="favorite">
-        <button>❤️</button>
+        <button></button>
       </div>
       <div className="image">
         <img
